@@ -50,3 +50,36 @@ input_data = pd.DataFrame({
     'OnlineBackup_No internet service': [1 if online_backup == 'No internet service' else 0],
     'OnlineBackup_Yes': [1 if online_backup == 'Yes' else 0],
     'DeviceProtection_No internet service': [1 if device_protection == 'No internet service' else 0],
+    'DeviceProtection_Yes': [1 if device_protection == 'Yes' else 0],
+    'TechSupport_No internet service': [1 if tech_support == 'No internet service' else 0],
+    'TechSupport_Yes': [1 if tech_support == 'Yes' else 0],
+    'StreamingTV_No internet service': [1 if streaming_tv == 'No internet service' else 0],
+    'StreamingTV_Yes': [1 if streaming_tv == 'Yes' else 0],
+    'StreamingMovies_No internet service': [1 if streaming_movies == 'No internet service' else 0],
+    'StreamingMovies_Yes': [1 if streaming_movies == 'Yes' else 0],
+    'Contract_One year': [1 if contract == 'One year' else 0],
+    'Contract_Two year': [1 if contract == 'Two year' else 0],
+    'PaperlessBilling_Yes': [1 if paperless_billing == 'Yes' else 0],
+    'PaymentMethod_Credit card (automatic)': [1 if payment_method == 'Credit card (automatic)' else 0],
+    'PaymentMethod_Electronic check': [1 if payment_method == 'Electronic check' else 0],
+    'PaymentMethod_Mailed check': [1 if payment_method == 'Mailed check' else 0],
+    'Tenure_MonthlyCharges_Ratio': [tenure / (monthly_charges + 1e-6)]
+})
+
+# Scale numerical features
+numerical_cols = ['tenure', 'MonthlyCharges', 'TotalCharges', 'Tenure_MonthlyCharges_Ratio']
+input_data[numerical_cols] = scaler.transform(input_data[numerical_cols])
+
+# Ensure columns match the training set exactly
+expected_cols = ['SeniorCitizen', 'tenure', 'MonthlyCharges', 'TotalCharges', 'gender_Male', 'Partner_Yes', 'Dependents_Yes', 'PhoneService_Yes', 'MultipleLines_No phone service', 'MultipleLines_Yes', 'InternetService_Fiber optic', 'InternetService_No', 'OnlineSecurity_No internet service', 'OnlineSecurity_Yes', 'OnlineBackup_No internet service', 'OnlineBackup_Yes', 'DeviceProtection_No internet service', 'DeviceProtection_Yes', 'TechSupport_No internet service', 'TechSupport_Yes', 'StreamingTV_No internet service', 'StreamingTV_Yes', 'StreamingMovies_No internet service', 'StreamingMovies_Yes', 'Contract_One year', 'Contract_Two year', 'PaperlessBilling_Yes', 'PaymentMethod_Credit card (automatic)', 'PaymentMethod_Electronic check', 'PaymentMethod_Mailed check', 'Tenure_MonthlyCharges_Ratio']
+input_data = input_data.reindex(columns=expected_cols, fill_value=0)
+
+# Predict
+if st.button('Predict'):
+    try:
+        prediction = model.predict(input_data)
+        prob = model.predict_proba(input_data)[0][1]
+        st.write(f'Churn Prediction: {"Yes" if prediction[0] == 1 else "No"}')
+        st.write(f'Churn Probability: {prob:.2%}')
+    except Exception as e:
+        st.error(f"Error making prediction: {str(e)}")
