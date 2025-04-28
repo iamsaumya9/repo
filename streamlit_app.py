@@ -49,4 +49,4 @@ input_data = pd.DataFrame({
     'OnlineSecurity_Yes': [1 if online_security == 'Yes' else 0],
     'OnlineBackup_No internet service': [1 if online_backup == 'No internet service' else 0],
     'OnlineBackup_Yes': [1 if online_backup == 'Yes' else 0],
-    'DeviceProtection_No internet service': [1 if device_pr
+    'DeviceProtection_No internet service': [1 if device_protection == 'No internet service' else 0],
